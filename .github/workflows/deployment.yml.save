@@ -29,20 +29,26 @@ jobs:
     needs: build
 
     steps:
-    - name: Deploy via SSH
-      uses: appleboy/ssh-action@v0.1.10
-      with:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
         host: ${{ secrets.VM_IP }}
         username: ${{ secrets.VM_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: |
-          mkdir -p ~/todo-app
-          cd ~/todo-app
+      key: ${{ secrets.SSH_PRIVATE_KEY }}
+      script: |
+        mkdir -p ~/todo-app
+        cd ~/todo-app
 
-          curl -f -O https://raw.githubusercontent.com/mordecai-lang/todo-app/main/docker-compose.yml
+        # ✅ Download correct compose file
+        curl -f -O https://raw.githubusercontent.com/mordecai-lang/todo-app/main/docker-compose.yml
 
-          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+        # ✅ Login to Docker Hub
+        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
-          docker-compose pull
-          docker-compose up -d --remove-orphans
-          echo "App running in port 5000"
+        # ✅ Pull latest images
+        docker-compose pull
+
+        # ✅ Restart containers cleanly
+        docker-compose up -d --remove-orphans
+
+        echo "🌍 http://${{ secrets.VM_IP }}:5000"
