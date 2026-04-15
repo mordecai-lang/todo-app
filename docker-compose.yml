@@ -12,8 +12,7 @@ services:
     environment:
       - FLASK_ENV=development
       - SECRET_KEY=myverystrongsecretkey
-    volumes:
-      - .:/app
+
 
   db:
     image: mysql:8.0
