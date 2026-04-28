@@ -1,4 +1,4 @@
-name: Deploy test to Azure Virtual Machine Test
+name: Deploy to Azure Virtual Machine testing
 on:
   push:
     branches:
